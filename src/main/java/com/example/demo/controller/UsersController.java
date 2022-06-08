@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.model.user.LogoutUserResponse;
 import com.example.demo.model.user.SecretToken;
 import com.example.demo.model.user.User;
 import com.example.demo.repos.UserRepository;
@@ -50,6 +51,15 @@ public class UsersController {
 				.setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 600000))
 				.signWith(SignatureAlgorithm.HS512, Resources.SIGNING_KEY.getBytes()).compact();
 		return token;
+	}
+
+	@PostMapping(path = "/close")
+	public LogoutUserResponse close(@RequestBody User user) {
+		logger.info("Logout for: " + user);
+		Jwts.builder().setId("softtekJWT").setSubject(user.getUsername()).claim("authorities", null);
+		LogoutUserResponse response = new LogoutUserResponse();
+		response.setResponse("OK!");
+		return response;
 	}
 
 	private final Logger logger = LoggerFactory.getLogger(ApplicationUser.class);

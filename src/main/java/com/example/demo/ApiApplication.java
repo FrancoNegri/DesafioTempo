@@ -25,8 +25,8 @@ public class ApiApplication {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http.csrf().disable().addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class).authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/users", "/login").permitAll().antMatchers(HttpMethod.GET, "/check").permitAll().anyRequest()
-			.authenticated();
+					.antMatchers(HttpMethod.POST, "/users", "/login").permitAll().antMatchers(HttpMethod.GET, "/history").permitAll().anyRequest()
+					.authenticated();
 		}
 	}
 
