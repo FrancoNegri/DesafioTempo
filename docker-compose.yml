@@ -9,6 +9,7 @@ services:
       MYSQL_HOST: db
     depends_on:
       - db
+    restart: on-failure
   db:
     image: postgres
     environment:
