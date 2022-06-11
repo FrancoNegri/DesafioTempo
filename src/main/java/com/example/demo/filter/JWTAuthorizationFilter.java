@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.demo.controller.UsersController;
 import com.example.demo.resources.Resources;
 
 import io.jsonwebtoken.Claims;
@@ -70,7 +71,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
 	private boolean checkJWTToken(HttpServletRequest request, HttpServletResponse res) {
 		String authenticationHeader = request.getHeader(HEADER);
-		if (authenticationHeader == null) {
+		if (authenticationHeader == null || !UsersController.tokenIsPresent(authenticationHeader)) {
 			return false;
 		}
 		return true;

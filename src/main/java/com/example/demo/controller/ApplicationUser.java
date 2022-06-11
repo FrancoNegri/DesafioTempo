@@ -26,12 +26,12 @@ public class ApplicationUser {
 	@PostMapping(path = "/users")
 	public CreateUserResponse createUser(@RequestBody User user) {
 		logger.info("Attepting to create user: " + user);
-		user.hashPassword();
-		if (userRepository.exists(Example.of(user, ExampleMatcher.matching().withIgnorePaths("id", "password")))) {
+		if (userRepository.exists(Example.of(user, ExampleMatcher.matching().withIgnorePaths("password")))) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
 		}
-		User savedUser = userRepository.save(user);
-		return new CreateUserResponse(savedUser.getId());
+		user.hashPassword();
+		userRepository.save(user);
+		return new CreateUserResponse(0);
 	}
 
 	private final Logger logger = LoggerFactory.getLogger(ApplicationUser.class);

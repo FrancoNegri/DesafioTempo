@@ -3,10 +3,12 @@ package com.example.demo.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.assertj.core.util.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.user.LogoutUserResponse;
@@ -33,17 +36,15 @@ public class UsersController {
 
 	@Autowired
 	private UserRepository userRepository;
+	private static Set<String> validTokens = Sets.newHashSet();
 
 	@PostMapping(path = "/login")
 	public SecretToken login(@Valid @RequestBody User user) {
 		logger.info("Logging attepmt from user: " + user);
-		user.hashPassword();
-		Optional<User> exisntingUser = userRepository.findOne(Example.of(user, ExampleMatcher.matching().withIgnorePaths("id")));
-		if (!exisntingUser.isPresent()) {
-			throw new UsernameNotFoundException(user.getUsername());
-		}
+		validateUser(user);
 		String token = getJWTToken(user.getUsername());
-		SecretToken secretToken = new SecretToken(exisntingUser.get().getId(), token);
+		saveToken(token);
+		SecretToken secretToken = new SecretToken(token);
 		return secretToken;
 	}
 
@@ -57,14 +58,35 @@ public class UsersController {
 	}
 
 	@PostMapping(path = "/close")
-	public LogoutUserResponse close(@Valid @RequestBody User user) {
+	public LogoutUserResponse close(@RequestHeader(value = "Authorization") String token, @Valid @RequestBody User user) {
 		logger.info("Logout for: " + user);
-		Jwts.builder().setId("softtekJWT").setSubject(user.getUsername()).claim("authorities", null);
+		validateUser(user);
+		removeToken(token);
 		LogoutUserResponse response = new LogoutUserResponse();
 		response.setResponse("OK!");
 		return response;
 	}
 
+	private void validateUser(User user) {
+		user.hashPassword();
+		Optional<User> existingUser = userRepository.findOne(Example.of(user, ExampleMatcher.matching()));
+		if (!existingUser.isPresent()) {
+			throw new UsernameNotFoundException(user.getUsername());
+		}
+	}
+
 	private final Logger logger = LoggerFactory.getLogger(ApplicationUser.class);
+
+	private static void saveToken(String saveToken) {
+		validTokens.add(saveToken);
+	}
+
+	private static void removeToken(String saveToken) {
+		validTokens.remove(saveToken);
+	}
+
+	public static boolean tokenIsPresent(String saveToken) {
+		return validTokens.contains(saveToken);
+	}
 
 }

@@ -7,9 +7,6 @@
 	"item": [
 		{
 			"name": "http://localhost:8080/login",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"auth": {
 					"type": "oauth2",
@@ -26,11 +23,11 @@
 						}
 					]
 				},
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\"limit\":100000,\n\"offset\":10\n}",
+					"raw": "{\n\"username\": \"2\",\n\"password\": \"2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -38,14 +35,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/history",
+					"raw": "http://localhost:8080/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"history"
+						"login"
 					]
 				},
 				"description": "User login"
@@ -171,7 +168,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"element_1\":1,\n    \"element_2\":1\n}",
+					"raw": "{\n\"username\": \"2\",\n\"password\": \"2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -223,7 +220,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\"limit\":100000,\n\"offset\":10\n}",
+					"raw": "{\n\"limit\":100,\n\"offset\":0\n}",
 					"options": {
 						"raw": {
 							"language": "json"
