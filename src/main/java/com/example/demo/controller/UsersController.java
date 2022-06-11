@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -8,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.assertj.core.util.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,8 @@ public class UsersController {
 
 	@Autowired
 	private UserRepository userRepository;
-	private static Set<String> validTokens = Sets.newHashSet();
+	// Better way: make set impl concurrent
+	private static Set<String> validTokens = new HashSet<>();
 
 	@PostMapping(path = "/login")
 	public SecretToken login(@Valid @RequestBody User user) {
@@ -77,15 +78,15 @@ public class UsersController {
 
 	private final Logger logger = LoggerFactory.getLogger(ApplicationUser.class);
 
-	private static void saveToken(String saveToken) {
+	private static synchronized void saveToken(String saveToken) {
 		validTokens.add(saveToken);
 	}
 
-	private static void removeToken(String saveToken) {
+	private static synchronized void removeToken(String saveToken) {
 		validTokens.remove(saveToken);
 	}
 
-	public static boolean tokenIsPresent(String saveToken) {
+	public static synchronized boolean tokenIsPresent(String saveToken) {
 		return validTokens.contains(saveToken);
 	}
 
