@@ -36,7 +36,7 @@ API uses access token to authenticate users.
 
 ### Request
 
-`POST /login`
+`POST /users`
 
 #### Body
 ```
