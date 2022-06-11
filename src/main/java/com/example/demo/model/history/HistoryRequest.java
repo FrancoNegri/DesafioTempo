@@ -1,23 +1,27 @@
 package com.example.demo.model.history;
 
+import javax.validation.constraints.NotNull;
+
 public class HistoryRequest {
 
-	private int limit;
-	private int offset;
+	@NotNull
+	private Integer limit;
+	@NotNull
+	private Integer offset;
 
-	public int getLimit() {
+	public Integer getLimit() {
 		return limit;
 	}
 
-	public void setLimit(int limit) {
+	public void setLimit(Integer limit) {
 		this.limit = limit;
 	}
 
-	public int getOffset() {
+	public Integer getOffset() {
 		return offset;
 	}
 
-	public void setOffset(int offset) {
+	public void setOffset(Integer offset) {
 		this.offset = offset;
 	}
 

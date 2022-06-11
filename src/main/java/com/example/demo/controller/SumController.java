@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +15,7 @@ import com.example.demo.model.sum.SumResult;
 public class SumController {
 
 	@PostMapping(path = "/sum")
-	public SumResult sum(@RequestBody SumRequest sumRequest) {
+	public SumResult sum(@Valid @RequestBody SumRequest sumRequest) {
 		int result = sumRequest.getElement1() + sumRequest.getElement2();
 		logger.info("Summing..." + sumRequest.getElement1() + "+" + sumRequest.getElement2() + "=" + result);
 		SumResult sumResult = new SumResult(result);

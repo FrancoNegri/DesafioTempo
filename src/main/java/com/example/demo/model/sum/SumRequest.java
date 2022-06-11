@@ -1,8 +1,12 @@
 package com.example.demo.model.sum;
 
+import javax.validation.constraints.NotNull;
+
 public class SumRequest {
 
+	@NotNull
 	private Integer element1;
+	@NotNull
 	private Integer element2;
 
 	public Integer getElement1() {

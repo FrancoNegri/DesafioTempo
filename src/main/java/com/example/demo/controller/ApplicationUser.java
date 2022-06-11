@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.model.user.CreateUserResponse;
 import com.example.demo.model.user.User;
@@ -26,7 +28,7 @@ public class ApplicationUser {
 		logger.info("Attepting to create user: " + user);
 		user.hashPassword();
 		if (userRepository.exists(Example.of(user, ExampleMatcher.matching().withIgnorePaths("id", "password")))) {
-			throw new RuntimeException("User already exists");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
 		}
 		User savedUser = userRepository.save(user);
 		return new CreateUserResponse(savedUser.getId());

@@ -1,12 +1,9 @@
 package com.example.demo.model.event;
 
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import com.example.demo.converter.ObjectConverter;
 
 @Entity(name = "event")
 public class Event {
@@ -15,8 +12,7 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String endpoint;
-	@Convert(converter = ObjectConverter.class)
-	private Object result;
+	private String result;
 
 	public String getEndpoint() {
 		return endpoint;
@@ -34,11 +30,11 @@ public class Event {
 		this.id = id;
 	}
 
-	public Object getResult() {
+	public String getResult() {
 		return result;
 	}
 
-	public void setResult(Object result) {
+	public void setResult(String result) {
 		this.result = result;
 	}
 

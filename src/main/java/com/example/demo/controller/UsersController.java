@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,12 +35,12 @@ public class UsersController {
 	private UserRepository userRepository;
 
 	@PostMapping(path = "/login")
-	public SecretToken login(@RequestBody User user) {
+	public SecretToken login(@Valid @RequestBody User user) {
 		logger.info("Logging attepmt from user: " + user);
 		user.hashPassword();
 		Optional<User> exisntingUser = userRepository.findOne(Example.of(user, ExampleMatcher.matching().withIgnorePaths("id")));
 		if (!exisntingUser.isPresent()) {
-			throw new RuntimeException("User and password did not match");
+			throw new UsernameNotFoundException(user.getUsername());
 		}
 		String token = getJWTToken(user.getUsername());
 		SecretToken secretToken = new SecretToken(exisntingUser.get().getId(), token);
@@ -54,7 +57,7 @@ public class UsersController {
 	}
 
 	@PostMapping(path = "/close")
-	public LogoutUserResponse close(@RequestBody User user) {
+	public LogoutUserResponse close(@Valid @RequestBody User user) {
 		logger.info("Logout for: " + user);
 		Jwts.builder().setId("softtekJWT").setSubject(user.getUsername()).claim("authorities", null);
 		LogoutUserResponse response = new LogoutUserResponse();
